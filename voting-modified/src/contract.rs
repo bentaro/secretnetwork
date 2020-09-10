@@ -163,7 +163,8 @@ pub fn withdraw_voting_tokens<S: Storage, A: Api, Q: Querier>(
         // }
         // .unwrap();
 
-        let ratio;
+        let staked_tokens_total = state.staked_tokens as u128;
+        let staked_tokens_winner;
 
         match state.status {
             PollStatus::Yes => {
@@ -172,7 +173,7 @@ pub fn withdraw_voting_tokens<S: Storage, A: Api, Q: Querier>(
                         "User is trying to withdraw tokens whereas he lost.",
                     ));
                 }
-                ratio = state.staked_tokens as f64 / state.staked_tokens_yes as f64;
+                staked_tokens_winner = state.staked_tokens_yes as u128;
             },
             PollStatus::No =>{
                 if token_manager.vote=="yes".to_string(){
@@ -180,7 +181,7 @@ pub fn withdraw_voting_tokens<S: Storage, A: Api, Q: Querier>(
                         "User is trying to withdraw tokens whereas he lost.",
                     ));
                 }
-                ratio = state.staked_tokens as f64 / state.staked_tokens_no as f64;
+                staked_tokens_winner = state.staked_tokens_no as u128;
             },
             _ =>{
                 return Err(StdError::generic_err(
@@ -189,8 +190,8 @@ pub fn withdraw_voting_tokens<S: Storage, A: Api, Q: Querier>(
                 }
         }
         //cast each member for calculation withdrawn balance
-        let balance = token_manager.token_balance as f64;
-        let balance = balance * ratio;
+        let balance = token_manager.token_balance as u128;
+        let balance = balance * staked_tokens_total / staked_tokens_winner;
 
         token_manager.token_balance = 0;
 
@@ -201,7 +202,7 @@ pub fn withdraw_voting_tokens<S: Storage, A: Api, Q: Querier>(
             &deps.api,
             &contract_address_raw,
             &sender_address_raw,
-            vec![coin(balance as u128, &state.denom)],
+            vec![coin(balance, &state.denom)],
             "approve",
             )
     } else {
