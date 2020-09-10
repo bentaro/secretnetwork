@@ -8,14 +8,14 @@ use crate::state::{
 use cosmwasm_std::{
     coin, log, to_binary, Api, BankMsg, Binary, CanonicalAddr, Coin, CosmosMsg, Env, Extern,
     HandleResponse, HandleResult, HumanAddr, InitResponse, InitResult, Querier, StdError,
-    StdResult, Storage, Uint128,
+    StdResult, Storage,
 };
 
 pub const VOTING_TOKEN: &str = "voting_token";
 pub const DEFAULT_END_HEIGHT_BLOCKS: &u64 = &50_000_u64;
 const MIN_STAKE_AMOUNT: u128 = 1;
-const MIN_DESC_LENGTH: usize = 3;
-const MAX_DESC_LENGTH: usize = 64;
+// const MIN_DESC_LENGTH: usize = 3;
+// const MAX_DESC_LENGTH: usize = 64;
 
 pub fn init<S: Storage, A: Api, Q: Querier>(
     deps: &mut Extern<S, A, Q>,
@@ -146,7 +146,7 @@ pub fn withdraw_voting_tokens<S: Storage, A: Api, Q: Querier>(
     let contract_address_raw = deps.api.canonical_address(&env.contract.address)?;
     let key = sender_address_raw.as_slice();
 
-    let mut state = config(&mut deps.storage).load()?;
+    let state = config(&mut deps.storage).load()?;
 
     // if let Pollstatus::InProgress=state.status {
     //     Err(StdError::generic_err(
@@ -163,7 +163,7 @@ pub fn withdraw_voting_tokens<S: Storage, A: Api, Q: Querier>(
         // }
         // .unwrap();
 
-        let mut ratio = 0.0;
+        let ratio;
 
         match state.status {
             PollStatus::Yes => {
@@ -210,34 +210,34 @@ pub fn withdraw_voting_tokens<S: Storage, A: Api, Q: Querier>(
 }
 
 /// validate_description returns an error if the description is invalid
-fn validate_description(description: &str) -> StdResult<()> {
-    if description.len() < MIN_DESC_LENGTH {
-        Err(StdError::generic_err("Description too short"))
-    } else if description.len() > MAX_DESC_LENGTH {
-        Err(StdError::generic_err("Description too long"))
-    } else {
-        Ok(())
-    }
-}
+// fn validate_description(description: &str) -> StdResult<()> {
+//     if description.len() < MIN_DESC_LENGTH {
+//         Err(StdError::generic_err("Description too short"))
+//     } else if description.len() > MAX_DESC_LENGTH {
+//         Err(StdError::generic_err("Description too long"))
+//     } else {
+//         Ok(())
+//     }
+// }
 
 /// validate_quorum_percentage returns an error if the quorum_percentage is invalid
 /// (we require 0-100)
-fn validate_quorum_percentage(quorum_percentage: Option<u8>) -> StdResult<()> {
-    if quorum_percentage.is_some() && quorum_percentage.unwrap() > 100 {
-        Err(StdError::generic_err("quorum_percentage must be 0 to 100"))
-    } else {
-        Ok(())
-    }
-}
+// fn validate_quorum_percentage(quorum_percentage: Option<u8>) -> StdResult<()> {
+//     if quorum_percentage.is_some() && quorum_percentage.unwrap() > 100 {
+//         Err(StdError::generic_err("quorum_percentage must be 0 to 100"))
+//     } else {
+//         Ok(())
+//     }
+// }
 
 /// validate_end_height returns an error if the poll ends in the past
-fn validate_end_height(end_height: Option<u64>, env: Env) -> StdResult<()> {
-    if end_height.is_some() && env.block.height >= end_height.unwrap() {
-        Err(StdError::generic_err("Poll cannot end in the past"))
-    } else {
-        Ok(())
-    }
-}
+// fn validate_end_height(end_height: Option<u64>, env: Env) -> StdResult<()> {
+//     if end_height.is_some() && env.block.height >= end_height.unwrap() {
+//         Err(StdError::generic_err("Poll cannot end in the past"))
+//     } else {
+//         Ok(())
+//     }
+// }
 
 
 /*
