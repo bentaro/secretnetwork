@@ -1,5 +1,4 @@
-use crate::state::{PollStatus, Voter};
-use cosmwasm_std::{CanonicalAddr, HumanAddr, Uint128};
+use cosmwasm_std::HumanAddr;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 

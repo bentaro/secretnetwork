@@ -1,4 +1,4 @@
-use cosmwasm_std::{CanonicalAddr, Storage, Uint128};
+use cosmwasm_std::{CanonicalAddr, Storage};
 use cosmwasm_storage::{
     bucket, bucket_read, singleton, singleton_read, Bucket, ReadonlyBucket, ReadonlySingleton,
     Singleton,
@@ -7,7 +7,7 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 static CONFIG_KEY: &[u8] = b"config";
-static POLL_KEY: &[u8] = b"polls";
+// static POLL_KEY: &[u8] = b"polls";
 static BANK_KEY: &[u8] = b"bank";
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
