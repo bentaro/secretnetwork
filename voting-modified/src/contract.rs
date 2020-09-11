@@ -97,17 +97,18 @@ pub fn stake_and_vote<S: Storage, A: Api, Q: Querier>(
         .find(|coin| coin.denom.eq(&state.denom))
         .unwrap();
 
-    token_manager.token_balance += sent_funds.amount.u128() as u64;
+    let sent_amount = sent_funds.amount.u128() as u64;
+    token_manager.token_balance = sent_amount;
     token_manager.vote = vote.clone();
 
-    let staked_tokens = state.staked_tokens + (sent_funds.amount.u128() as u64);
+    let staked_tokens = state.staked_tokens + sent_amount;
     state.staked_tokens = staked_tokens;
 
     if vote=="yes" {
-        state.staked_tokens_yes = staked_tokens;
+        state.staked_tokens_yes += sent_amount;
         state.yes_votes += 1;
     }else{
-        state.staked_tokens_no = staked_tokens;
+        state.staked_tokens_no += sent_amount;
         state.no_votes += 1
     }
 
